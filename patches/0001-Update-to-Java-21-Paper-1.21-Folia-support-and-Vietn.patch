@@ -5,17 +5,17 @@ Subject: [PATCH] Update to Java 21, Paper 1.21, Folia support and Vietnamese
  localization
 
 ---
- pom.xml                                       | 75 ++++++++++---------
- .../thebusybiscuit/souljars/SoulJars.java     | 20 ++---
- src/main/resources/config.yml                 |  2 +-
- src/main/resources/plugin.yml                 |  3 +-
- 4 files changed, 53 insertions(+), 47 deletions(-)
+ pom.xml                                            | 79 ++++++++++++----------
+ .../github/thebusybiscuit/souljars/SoulJars.java   | 20 +++---
+ src/main/resources/config.yml                      |  2 +-
+ src/main/resources/plugin.yml                      |  3 +-
+ 4 files changed, 57 insertions(+), 47 deletions(-)
 
 diff --git a/pom.xml b/pom.xml
-index 4197538..fc3ca19 100644
+index 4197538..e35e043 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -8,27 +8,31 @@
+@@ -8,27 +8,35 @@
      <version>UNOFFICIAL</version>
  
      <properties>
@@ -53,10 +53,14 @@ index 4197538..fc3ca19 100644
 +        <repository>
 +            <id>spigot-repo</id>
 +            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
++        </repository>
++        <repository>
++            <id>neokoni-snapshots</id>
++            <url>https://repo.neokoni.ink/snapshots/</url>
          </repository>
      </repositories>
  
-@@ -47,7 +51,6 @@
+@@ -47,7 +55,6 @@
              </resource>
              <resource>
                  <directory>${basedir}</directory>
@@ -64,7 +68,7 @@ index 4197538..fc3ca19 100644
                  <includes>
                      <include>LICENSE</include>
                  </includes>
-@@ -55,22 +58,30 @@
+@@ -55,22 +62,30 @@
          </resources>
  
          <plugins>
@@ -102,7 +106,7 @@ index 4197538..fc3ca19 100644
                      <filters>
                          <filter>
                              <artifact>*:*</artifact>
-@@ -80,13 +91,10 @@
+@@ -80,13 +95,10 @@
                          </filter>
                      </filters>
                  </configuration>
@@ -117,7 +121,7 @@ index 4197538..fc3ca19 100644
                      </execution>
                  </executions>
              </plugin>
-@@ -95,32 +103,29 @@
+@@ -95,32 +107,29 @@
  
      <dependencies>
          <dependency>
@@ -247,4 +251,3 @@ index bbb5331..400488d 100644
  - Slimefun
 -- 
 2.47.3
-
