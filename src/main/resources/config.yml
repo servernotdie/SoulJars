@@ -1,7 +1,7 @@
 options:
   auto-update: true
 
-# 在此处找到所有生物类型: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+# Tim tat ca loai quai tai: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 mobs:
   - AXOLOTL
   - BAT

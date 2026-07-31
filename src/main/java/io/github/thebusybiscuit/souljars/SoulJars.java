@@ -42,8 +42,8 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
         cfg = new Config(this);
 
         if (!getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
-            getLogger().log(Level.SEVERE, "本插件需要 鬼斩前置库插件(GuizhanLibPlugin) 才能运行!");
-            getLogger().log(Level.SEVERE, "从此处下载: https://50l.cc/gzlib");
+            getLogger().log(Level.SEVERE, "Plugin nay can GuizhanLibPlugin de hoat dong!");
+            getLogger().log(Level.SEVERE, "Tai tai: https://50l.cc/gzlib");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -55,9 +55,9 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
             GuizhanUpdater.start(this, getFile(), "SlimefunGuguProject", "SoulJars", "master");
         }
 
-        emptyJar = new SlimefunItemStack("SOUL_JAR", JAR_TEXTURE, "&b灵魂罐 &7(空)", "", "&r当此物品在你的物品栏时", "&r击杀生物可封印其灵魂于灵魂罐中");
-        itemGroup = new ItemGroup(new NamespacedKey(this, "soul_jars"), new CustomItemStack(emptyJar, "&b灵魂罐", "", "&a> 点击打开"));
-        recipeType = new RecipeType(new NamespacedKey(this, "mob_killing"), new CustomItemStack(Material.DIAMOND_SWORD, "&c当物品栏中有空的灵魂罐时", "&c击杀特定的生物"));
+        emptyJar = new SlimefunItemStack("SOUL_JAR", JAR_TEXTURE, "&bBinh Linh Hon &7(Trong)", "", "&rKhi o trong tui do:", "&rGiet quai de phong an linh hon");
+        itemGroup = new ItemGroup(new NamespacedKey(this, "soul_jars"), new CustomItemStack(emptyJar, "&bBinh Linh Hon", "", "&a> Bam de mo"));
+        recipeType = new RecipeType(new NamespacedKey(this, "mob_killing"), new CustomItemStack(Material.DIAMOND_SWORD, "&cKhi co Binh Trong trong tui do:", "&cGiet quai tuong ung"));
 
         new SlimefunItem(itemGroup, emptyJar, RecipeType.ANCIENT_ALTAR, new ItemStack[] { SlimefunItems.EARTH_RUNE, new ItemStack(Material.SOUL_SAND), SlimefunItems.WATER_RUNE, new ItemStack(Material.SOUL_SAND), SlimefunItems.NECROTIC_SKULL, new ItemStack(Material.SOUL_SAND), SlimefunItems.AIR_RUNE, new ItemStack(Material.SOUL_SAND), SlimefunItems.FIRE_RUNE }, new CustomItemStack(emptyJar, 3)).register(this);
         new JarsListener(this);
@@ -67,7 +67,7 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
                 EntityType type = EntityType.valueOf(mob);
                 registerSoul(type);
             } catch (Exception x) {
-                getLogger().log(Level.WARNING, "{0}: 无效的生物类型: {1}", new Object[] { x.getClass().getSimpleName(), mob });
+                getLogger().log(Level.WARNING, "{0}: Loai quai khong hop le: {1}", new Object[] { x.getClass().getSimpleName(), mob });
             }
         }
 
@@ -87,14 +87,14 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
         }
 
         // @formatter:off
-        SlimefunItemStack jarItem = new SlimefunItemStack(type.name() + "_SOUL_JAR", JAR_TEXTURE, "&c灵魂罐 &7(" + name + ")", "", "&7已封印灵魂: &e1");
+        SlimefunItemStack jarItem = new SlimefunItemStack(type.name() + "_SOUL_JAR", JAR_TEXTURE, "&cBinh Linh Hon &7(" + name + ")", "", "&7Linh hon: &e1");
         SlimefunItem jar = new UnplaceableBlock(itemGroup, jarItem, recipeType,
-        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&r击杀" + souls + "个" + name + "以装满"), null, null, null });
+        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&rGiet " + souls + " " + name + " de day"), null, null, null });
         jar.register(this);
 
-        SlimefunItemStack filledJarItem = new SlimefunItemStack("FILLED_" + type.name() + "_SOUL_JAR", JAR_TEXTURE, "&c装满的灵魂罐 &7(" + name + ")", "", "&7已封印灵魂: &e" + souls);
+        SlimefunItemStack filledJarItem = new SlimefunItemStack("FILLED_" + type.name() + "_SOUL_JAR", JAR_TEXTURE, "&cBinh Linh Hon Day &7(" + name + ")", "", "&7Linh hon: &e" + souls);
         SlimefunItem filledJar = new FilledJar(itemGroup, filledJarItem, recipeType,
-        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&r击杀" + souls + "个" + name), null, null, null });
+        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&rGiet " + souls + " " + name), null, null, null });
         filledJar.register(this);
 
         BrokenSpawner brokenSpawner = SlimefunItems.BROKEN_SPAWNER.getItem(BrokenSpawner.class);

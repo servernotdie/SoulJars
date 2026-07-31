@@ -3,8 +3,9 @@ version: ${project.version}
 author: TheBusyBiscuit
 website: https://github.com/TheBusyBiscuit/souljars
 
-api-version: 1.14
+api-version: 1.21
 main: io.github.thebusybiscuit.souljars.SoulJars
+folia-supported: true
 
 depend:
 - Slimefun
