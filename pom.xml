@@ -34,6 +34,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>neokoni-snapshots</id>
+            <url>https://repo.neokoni.ink/snapshots/</url>
+        </repository>
     </repositories>
 
     <build>
