@@ -1,0 +1,250 @@
+From 655c435f71fc5522a4b3744db26e9ed16a5cc10d Mon Sep 17 00:00:00 2001
+From: mytai20100 <142713298+Mytai20100@users.noreply.github.com>
+Date: Fri, 31 Jul 2026 18:02:33 +0700
+Subject: [PATCH] Update to Java 21, Paper 1.21, Folia support and Vietnamese
+ localization
+
+---
+ pom.xml                                       | 75 ++++++++++---------
+ .../thebusybiscuit/souljars/SoulJars.java     | 20 ++---
+ src/main/resources/config.yml                 |  2 +-
+ src/main/resources/plugin.yml                 |  3 +-
+ 4 files changed, 53 insertions(+), 47 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index 4197538..fc3ca19 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -8,27 +8,31 @@
+     <version>UNOFFICIAL</version>
+ 
+     <properties>
+-        <maven.compiler.source>16</maven.compiler.source>
+-        <maven.compiler.target>16</maven.compiler.target>
++        <maven.compiler.source>21</maven.compiler.source>
++        <maven.compiler.target>21</maven.compiler.target>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+     </properties>
+ 
+     <repositories>
+         <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+-        </repository>
+-        <repository>
+-            <id>spigot-repo</id>
+-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
++            <id>papermc</id>
++            <url>https://repo.papermc.io/repository/maven-public/</url>
+         </repository>
+         <repository>
+             <id>jitpack.io</id>
+             <url>https://jitpack.io</url>
+         </repository>
++        <repository>
++            <id>tcoded-releases</id>
++            <url>https://repo.tcoded.com/releases</url>
++        </repository>
+         <repository>
+             <id>codemc-repo</id>
+-            <url>https://repo.codemc.org/repository/maven-public</url>
++            <url>https://repo.codemc.io/repository/maven-public/</url>
++        </repository>
++        <repository>
++            <id>spigot-repo</id>
++            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+     </repositories>
+ 
+@@ -47,7 +51,6 @@
+             </resource>
+             <resource>
+                 <directory>${basedir}</directory>
+-
+                 <includes>
+                     <include>LICENSE</include>
+                 </includes>
+@@ -55,22 +58,30 @@
+         </resources>
+ 
+         <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-compiler-plugin</artifactId>
++                <version>3.13.0</version>
++                <configuration>
++                    <source>21</source>
++                    <target>21</target>
++                </configuration>
++            </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.5.0</version>
+-
++                <version>3.6.0</version>
+                 <configuration>
+-
+-                    <!-- Shade dependencies into the output jar -->
+                     <relocations>
+                         <relocation>
+                             <pattern>org.bstats</pattern>
+-                            <shadedPattern>io.github.thebusybiscuit.souljars.bstats</shadedPattern>
++                            <shadedPattern>io.github.thebusybiscuit.souljars.libs.bstats</shadedPattern>
++                        </relocation>
++                        <relocation>
++                            <pattern>com.tcoded.folialib</pattern>
++                            <shadedPattern>io.github.thebusybiscuit.souljars.libs.folialib</shadedPattern>
+                         </relocation>
+                     </relocations>
+-
+-                    <!-- Exclude unneeded metadata files from shaded dependencies -->
+                     <filters>
+                         <filter>
+                             <artifact>*:*</artifact>
+@@ -80,13 +91,10 @@
+                         </filter>
+                     </filters>
+                 </configuration>
+-
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
++                        <goals><goal>shade</goal></goals>
+                     </execution>
+                 </executions>
+             </plugin>
+@@ -95,32 +103,29 @@
+ 
+     <dependencies>
+         <dependency>
+-            <groupId>org.spigotmc</groupId>
+-            <artifactId>spigot-api</artifactId>
+-            <version>1.16.5-R0.1-SNAPSHOT</version>
++            <groupId>io.papermc.paper</groupId>
++            <artifactId>paper-api</artifactId>
++            <version>1.21.11-R0.1-SNAPSHOT</version>
+             <scope>provided</scope>
+         </dependency>
+-
+         <dependency>
+-            <groupId>com.github.Slimefun</groupId>
++            <groupId>com.github.servernotdie</groupId>
+             <artifactId>Slimefun4</artifactId>
+-            <version>RC-37</version>
++            <version>79809c0a</version>
+             <scope>provided</scope>
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>io.github.baked-libs</groupId>
+-                    <artifactId>dough-api</artifactId>
+-                </exclusion>
+-            </exclusions>
+         </dependency>
+-
++        <dependency>
++            <groupId>com.tcoded</groupId>
++            <artifactId>FoliaLib</artifactId>
++            <version>0.5.1</version>
++            <scope>compile</scope>
++        </dependency>
+         <dependency>
+             <groupId>org.bstats</groupId>
+             <artifactId>bstats-bukkit</artifactId>
+             <version>3.0.2</version>
+             <scope>compile</scope>
+         </dependency>
+-
+         <dependency>
+             <groupId>net.guizhanss</groupId>
+             <artifactId>GuizhanLibPlugin</artifactId>
+diff --git a/src/main/java/io/github/thebusybiscuit/souljars/SoulJars.java b/src/main/java/io/github/thebusybiscuit/souljars/SoulJars.java
+index bd8e6c5..b4b5aa8 100644
+--- a/src/main/java/io/github/thebusybiscuit/souljars/SoulJars.java
++++ b/src/main/java/io/github/thebusybiscuit/souljars/SoulJars.java
+@@ -42,8 +42,8 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
+         cfg = new Config(this);
+ 
+         if (!getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
+-            getLogger().log(Level.SEVERE, "本插件需要 鬼斩前置库插件(GuizhanLibPlugin) 才能运行!");
+-            getLogger().log(Level.SEVERE, "从此处下载: https://50l.cc/gzlib");
++            getLogger().log(Level.SEVERE, "Plugin nay can GuizhanLibPlugin de hoat dong!");
++            getLogger().log(Level.SEVERE, "Tai tai: https://50l.cc/gzlib");
+             getServer().getPluginManager().disablePlugin(this);
+             return;
+         }
+@@ -55,9 +55,9 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
+             GuizhanUpdater.start(this, getFile(), "SlimefunGuguProject", "SoulJars", "master");
+         }
+ 
+-        emptyJar = new SlimefunItemStack("SOUL_JAR", JAR_TEXTURE, "&b灵魂罐 &7(空)", "", "&r当此物品在你的物品栏时", "&r击杀生物可封印其灵魂于灵魂罐中");
+-        itemGroup = new ItemGroup(new NamespacedKey(this, "soul_jars"), new CustomItemStack(emptyJar, "&b灵魂罐", "", "&a> 点击打开"));
+-        recipeType = new RecipeType(new NamespacedKey(this, "mob_killing"), new CustomItemStack(Material.DIAMOND_SWORD, "&c当物品栏中有空的灵魂罐时", "&c击杀特定的生物"));
++        emptyJar = new SlimefunItemStack("SOUL_JAR", JAR_TEXTURE, "&bBinh Linh Hon &7(Trong)", "", "&rKhi o trong tui do:", "&rGiet quai de phong an linh hon");
++        itemGroup = new ItemGroup(new NamespacedKey(this, "soul_jars"), new CustomItemStack(emptyJar, "&bBinh Linh Hon", "", "&a> Bam de mo"));
++        recipeType = new RecipeType(new NamespacedKey(this, "mob_killing"), new CustomItemStack(Material.DIAMOND_SWORD, "&cKhi co Binh Trong trong tui do:", "&cGiet quai tuong ung"));
+ 
+         new SlimefunItem(itemGroup, emptyJar, RecipeType.ANCIENT_ALTAR, new ItemStack[] { SlimefunItems.EARTH_RUNE, new ItemStack(Material.SOUL_SAND), SlimefunItems.WATER_RUNE, new ItemStack(Material.SOUL_SAND), SlimefunItems.NECROTIC_SKULL, new ItemStack(Material.SOUL_SAND), SlimefunItems.AIR_RUNE, new ItemStack(Material.SOUL_SAND), SlimefunItems.FIRE_RUNE }, new CustomItemStack(emptyJar, 3)).register(this);
+         new JarsListener(this);
+@@ -67,7 +67,7 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
+                 EntityType type = EntityType.valueOf(mob);
+                 registerSoul(type);
+             } catch (Exception x) {
+-                getLogger().log(Level.WARNING, "{0}: 无效的生物类型: {1}", new Object[] { x.getClass().getSimpleName(), mob });
++                getLogger().log(Level.WARNING, "{0}: Loai quai khong hop le: {1}", new Object[] { x.getClass().getSimpleName(), mob });
+             }
+         }
+ 
+@@ -87,14 +87,14 @@ public class SoulJars extends JavaPlugin implements Listener, SlimefunAddon {
+         }
+ 
+         // @formatter:off
+-        SlimefunItemStack jarItem = new SlimefunItemStack(type.name() + "_SOUL_JAR", JAR_TEXTURE, "&c灵魂罐 &7(" + name + ")", "", "&7已封印灵魂: &e1");
++        SlimefunItemStack jarItem = new SlimefunItemStack(type.name() + "_SOUL_JAR", JAR_TEXTURE, "&cBinh Linh Hon &7(" + name + ")", "", "&7Linh hon: &e1");
+         SlimefunItem jar = new UnplaceableBlock(itemGroup, jarItem, recipeType,
+-        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&r击杀" + souls + "个" + name + "以装满"), null, null, null });
++        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&rGiet " + souls + " " + name + " de day"), null, null, null });
+         jar.register(this);
+ 
+-        SlimefunItemStack filledJarItem = new SlimefunItemStack("FILLED_" + type.name() + "_SOUL_JAR", JAR_TEXTURE, "&c装满的灵魂罐 &7(" + name + ")", "", "&7已封印灵魂: &e" + souls);
++        SlimefunItemStack filledJarItem = new SlimefunItemStack("FILLED_" + type.name() + "_SOUL_JAR", JAR_TEXTURE, "&cBinh Linh Hon Day &7(" + name + ")", "", "&7Linh hon: &e" + souls);
+         SlimefunItem filledJar = new FilledJar(itemGroup, filledJarItem, recipeType,
+-        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&r击杀" + souls + "个" + name), null, null, null });
++        new ItemStack[] { null, null, null, emptyJar, null, new CustomItemStack(mobEgg, "&rGiet " + souls + " " + name), null, null, null });
+         filledJar.register(this);
+ 
+         BrokenSpawner brokenSpawner = SlimefunItems.BROKEN_SPAWNER.getItem(BrokenSpawner.class);
+diff --git a/src/main/resources/config.yml b/src/main/resources/config.yml
+index 2c8728d..0137f17 100644
+--- a/src/main/resources/config.yml
++++ b/src/main/resources/config.yml
+@@ -1,7 +1,7 @@
+ options:
+   auto-update: true
+ 
+-# 在此处找到所有生物类型: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
++# Tim tat ca loai quai tai: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+ mobs:
+   - AXOLOTL
+   - BAT
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+index bbb5331..400488d 100644
+--- a/src/main/resources/plugin.yml
++++ b/src/main/resources/plugin.yml
+@@ -3,8 +3,9 @@ version: ${project.version}
+ author: TheBusyBiscuit
+ website: https://github.com/TheBusyBiscuit/souljars
+ 
+-api-version: 1.14
++api-version: 1.21
+ main: io.github.thebusybiscuit.souljars.SoulJars
++folia-supported: true
+ 
+ depend:
+ - Slimefun
+-- 
+2.47.3
+
